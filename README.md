@@ -12,7 +12,9 @@
 
 [ ✔ ] gitignore 설정
 
-[ ❌ ] 라이센스, author 추가
+[ ✔ ] License 추가
+
+[ ❌ ] author 추가
 
 
 ### Back-End
@@ -27,11 +29,15 @@
 
 [ ✔ ]  JWT 설정 및 jwt토큰 발급 url 설정
 
+[ ✔ ]  signup 로직 구현
+
 
 
 ### Front-End
 
-[ ❌ ] 로그인, 회원가입 router 제작
+[ ✔ ] 로그인, 회원가입 router 제작
+
+[ ❌ ] 로그인, 회원가입 기능 구현
 
 
 
