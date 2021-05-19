@@ -141,3 +141,11 @@ CORS_ALLOW_ALL_ORIGINS = True
 #     "http://localhost:8080",
 #     "http://127.0.0.1:9000"
 # ]
+
+# JWT 설정
+import datetime
+
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=10),
+    # 'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
+}
