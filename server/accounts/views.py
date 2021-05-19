@@ -10,6 +10,18 @@ from .serializers import UserSerializer
 
 @api_view(['GET', 'POST'])
 def signup(request):
-  user = get_object_or_404(get_user_model(), pk=1)
-  serializer = UserSerializer(user)
-  return Response(serializer.data)
+  print(request.data)
+  # 1. 비밀번호와 비밀번호 확인이 일치하는지 확인한다.
+  password = request.data.get('password')
+  password_confirm = request.data.get('passwordConfirm')
+  if password != password_confirm : return Response({""}, status=status.HTTP_400_BAD_REQUEST) 
+
+  # 2. serializer로 받아서 저장을 한다. 그리고 결과로 serializer의 data를 리턴한다.
+  serializer = UserSerializer(data=request.data)
+  if serializer.is_valid(raise_exception=True):
+    user = serializer.save()
+    user.set_password(request.data.get('password'))
+    user.save()
+    return Response(serializer.data)
+
+  return Response()
