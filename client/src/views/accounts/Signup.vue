@@ -2,8 +2,8 @@
   <div>
     <h1>Signup</h1>
     <div>
-      <label>Email: </label>
-      <input type="text">
+      <label for="email">Email: </label>
+      <input type="email" id="email" v-model="credentials.email">
     </div>
     <div>
       <label for="username">사용자 이름: </label>
@@ -38,6 +38,7 @@ export default {
   data: function () {
     return {
       credentials: {
+        email: '',
         username: '',
         password: '',
         passwordConfirmation: '',
@@ -57,10 +58,10 @@ export default {
       })
     }
   },
-  created: function () {
-    if (this.isLogin) {
-      this.$router.push({ name: 'TodoList' })
-    }
-  }
+  // created: function () {
+  //   if (this.isLogin) {
+  //     this.$router.push({ name: 'TodoList' })
+  //   }
+  // }
 }
 </script>
