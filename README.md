@@ -3,13 +3,7 @@
 ## 멤버 - 김준영, 한건
 
 
-
-
-
----
-
 ## 진행 상황
-
 
 
 ### 공통
@@ -19,9 +13,6 @@
 [ ✔ ] gitignore 설정
 
 [ ❌ ] 라이센스, author 추가
-
-
-
 
 
 ### Back-End
@@ -38,15 +29,9 @@
 
 
 
-
-
 ### Front-End
 
 [ ❌ ] 로그인, 회원가입 router 제작
-
-
-
-
 
 
 
@@ -54,10 +39,11 @@
 
 ## Front-End 서버 패키지
 
-``  vue, vuex, vue-router, axios, lodash``
-
-
-
+``vue``
+``vuex``
+``vue-router``
+``axios``
+``lodash``
 
 
 ## Back-End 서버 패키지
