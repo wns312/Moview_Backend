@@ -1,6 +1,6 @@
 
-# Created by https://www.toptal.com/developers/gitignore/api/venv,django,windows,vuejs,python,macos,linux,visualstudiocode
-# Edit at https://www.toptal.com/developers/gitignore?templates=venv,django,windows,vuejs,python,macos,linux,visualstudiocode
+# Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,django,python,macos,windows,linux,venv
+# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,django,python,macos,windows,linux,venv
 
 ### Django ###
 *.log
@@ -298,13 +298,6 @@ pip-selfcheck.json
 .history
 .ionide
 
-### Vuejs ###
-# Recommended template: Node.gitignore
-
-node_modules/
-npm-debug.log
-yarn-error.log
-
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db:encryptable
@@ -330,4 +323,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/venv,django,windows,vuejs,python,macos,linux,visualstudiocode
+# End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,django,python,macos,windows,linux,venv
