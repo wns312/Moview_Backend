@@ -2,8 +2,6 @@ from django.db import models
 from django.contrib.auth import settings
 from movies.models import Movie
 # Create your models here.
-
-
 class Article(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
