@@ -3,7 +3,7 @@ from .models import Movie, Genre, Prefer
 from accounts.models import User
 from .serializers import GenreSerializer, MovieSerializer, MovieListSerializer, PreferSerializer
 from accounts.serializers import UserSerializer
-
+import requests
 # jwt
 from rest_framework import status
 from rest_framework.response import Response
