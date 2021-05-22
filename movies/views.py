@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 from .models import Movie, Genre, Prefer
 from accounts.models import User
-from .serializers import GenreSerializer, MovieSerializer, MovieListSerializer, PreferSerializer
 from accounts.serializers import UserSerializer
+from .serializers import GenreSerializer, MovieSerializer, MovieListSerializer, PreferSerializer
 from datetime import date
 import requests
 # jwt
@@ -12,6 +12,16 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 # Create your views here.
+
+@api_view(['POST'])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_movie_detail(requests, movie_id):
+    movie = get_object_or_404(Movie, pk=movie_id)
+    serializer = MovieSerializer(movie)
+    return Response(serializer.data)
+
+
 
 # 영화 가져와서 db에 넣는 로직
 @api_view(['GET'])

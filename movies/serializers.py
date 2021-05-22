@@ -11,13 +11,13 @@ class MovieSerializer(serializers.ModelSerializer):
 
 class MovieListSerializer(serializers.ModelSerializer):
     class Meta:
-      model = Movie
-      fields = '__all__'
+        model = Movie
+        fields = '__all__'
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
-      model = Genre
-      fields = '__all__'
+        model = Genre
+        fields = '__all__'
 
 class PreferSerializer(serializers.ModelSerializer):
 
