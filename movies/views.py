@@ -1,20 +1,11 @@
-from django.http.response import JsonResponse
-from django.shortcuts import get_list_or_404, render, get_object_or_404
-# from requests.models import Response
-from .models import Genre, Movie
-from .serializers import GenreSerializer, MovieSerializer, MovieListSerializer
-import requests
-from datetime import date
+from django.shortcuts import render, get_object_or_404, get_list_or_404
+from .models import Movie, Genre, Prefer
+from .serializers import GenreSerializer, MovieSerializer, MovieListSerializer, PreferSerializer
 
-# getgenres / getmovies 
-from django.http import HttpResponse
-
+# jwt
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework import serializers
-from rest_framework.serializers import Serializer
-from rest_framework.decorators import api_view
-from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 # Create your views here.
@@ -73,3 +64,4 @@ def showmovies(request):
     serializer = MovieListSerializer(movie_list, many=True)
     # HTTP status 코드와 함께 반환
     return Response(serializer.data, status=status.HTTP_200_OK)
+

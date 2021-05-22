@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import settings
-
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 # Create your models here.
 class Movie(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -29,13 +30,11 @@ class Movie(models.Model):
     # 영화 선호 목록 추가 기준은 더 고민해볼것
     prefer_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='prefer_movies', through='Prefer')
 
-
-# 모델과 유저의 manytomany 중개모델을 직접 만들어야 한다..
-# 바로 여기
+# 중개모델
 class Prefer(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    rating = models.IntegerField()  # choice로 바꾸고 싶은데 나중에 생각하자.. 0~10
+    rating = models.IntegerField()
 
 class Genre(models.Model):
     id = models.BigAutoField(primary_key=True)
