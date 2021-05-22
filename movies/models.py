@@ -33,13 +33,13 @@ class Movie(models.Model):
 # 모델과 유저의 manytomany 중개모델을 직접 만들어야 한다..
 # 바로 여기
 class Prefer(models.Model):
-    RATE_RANGE = (
+    RATES = (
         (0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5),
         (6, 6), (7, 7), (8, 8), (9, 9), (10, 10),
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    rating = models.IntegerField(choices=RATE_RANGE)  # choice로 바꾸고 싶은데 나중에 생각하자.. 0~10
+    rating = models.IntegerField(choices=RATES)  # choice로 바꾸고 싶은데 나중에 생각하자.. 0~10
 
 class Genre(models.Model):
     id = models.BigAutoField(primary_key=True)
