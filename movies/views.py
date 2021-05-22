@@ -23,9 +23,9 @@ def movie_vote(request, movie_id):
         return Response({'message' : '유효한 숫자가 아닙니다'}, status=status.HTTP_400_BAD_REQUEST)
     
     request.data['user'], request.data['movie'] = request.user.id, movie_id
-
-    prefer = get_object_or_404(Prefer, movie_id=movie_id, user=request.user)
-    if prefer:  # 이미 투표한 적이 있다면 수정
+    is_prefer_exist = Prefer.objects.filter(movie_id=movie_id, user=request.user).exists()
+    if is_prefer_exist:  # 이미 투표한 적이 있다면 수정
+        prefer = get_object_or_404(Prefer, movie_id=movie_id, user=request.user)
         serializer = PreferSerializer(prefer, data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -41,10 +41,16 @@ def movie_vote(request, movie_id):
 @permission_classes([IsAuthenticated])
 def get_movie_detail(request, movie_id):
     movie = get_object_or_404(Movie, pk=movie_id)
-    prefer = get_object_or_404(Prefer, movie=movie, user=request.user)
-    print(prefer.rating)
     serializer = MovieSerializer(movie)
-    return Response({"movie" : serializer.data, "rating" : prefer.rating})
+    
+    is_prefer_exist = Prefer.objects.filter(movie_id=movie_id, user=request.user).exists()
+    rating = None
+
+    if is_prefer_exist:
+        prefer = get_object_or_404(Prefer, movie_id=movie_id, user=request.user)
+        rating = prefer.rating
+    
+    return Response({"movie" : serializer.data, "rating" : rating})
 
 
 
