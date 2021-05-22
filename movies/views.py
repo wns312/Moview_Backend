@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 from .models import Movie, Genre, Prefer
+from accounts.models import User
 from .serializers import GenreSerializer, MovieSerializer, MovieListSerializer, PreferSerializer
+from accounts.serializers import UserSerializer
 
 # jwt
 from rest_framework import status
@@ -53,5 +55,24 @@ def showmovies(request):
     # MovieListSerializer로 Movie 모델에서 데이터를 읽은 후 모든 필드에서 직렬화를 통해 json으로 변환
     serializer = MovieListSerializer(movie_list, many=True)
     # HTTP status 코드와 함께 반환
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# 영화 정보 받아서 뿌리기위한 로직
+@api_view(['GET'])
+def test(request):
+    # 정참조
+    movie = Movie.objects.get(pk=8)
+    prefer_users = movie.prefer_users.all()
+    serializer = UserSerializer(prefer_users, many=True)
+
+    # # 중개모델 쿼리
+    # prefer = Prefer.objects.get(movie=8)
+    # serializer = PreferSerializer(prefer)
+
+    # # 역참조
+    # user = User.objects.get(pk=6)
+    # prefer_movies = user.prefer_movies.all()
+    # serializer = MovieSerializer(prefer_movies, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
