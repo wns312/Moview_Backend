@@ -6,6 +6,9 @@ from .serializers import GenreSerializer, MovieSerializer, MovieListSerializer
 import requests
 from datetime import date
 
+# getgenres / getmovies 
+from django.http import HttpResponse
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import serializers
@@ -17,6 +20,7 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 # Create your views here.
 
 # 영화 가져와서 db에 넣는 로직
+@api_view(['GET'])
 def getmovies(request):
     for page in range(1, 21):
         URL = f'https://api.themoviedb.org/3/movie/popular?api_key=4507744d222eb5c01174a9eb93bdf2af&language=ko-KR&page={page}'
@@ -39,15 +43,24 @@ def getmovies(request):
             for genre in genres:
                 genre_instance = get_object_or_404(Genre, pk=genre)
                 movie_instance.genres.add(genre_instance)
-            
+    movie_list = get_list_or_404(Movie)
+    serializer = MovieListSerializer(movie_list, many=True)
+    # return Response로 통일
+    return Response(serializer.data, status=status.HTTP_200_OK)
             
 # 장르 저장 로직
+@api_view(['GET'])
 def getgenres(request):
     URL = 'https://api.themoviedb.org/3/genre/movie/list?api_key=4507744d222eb5c01174a9eb93bdf2af'
     response = requests.get(URL)
     for genre in response.json().get('genres'):
         genre = Genre(id=genre.get('id'), name=genre.get('name'))
         genre.save()
+    genre_list = get_list_or_404(Genre)
+    serializer = GenreSerializer(genre_list, many=True)
+    # print(Response(serializer.data))
+    # return Response로 통일해줌.
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 # 영화 정보 받아서 뿌리기위한 로직
 @api_view(['GET'])
