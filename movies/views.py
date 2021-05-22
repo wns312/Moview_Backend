@@ -58,8 +58,6 @@ def getgenres(request):
 
 # 영화 정보 받아서 뿌리기위한 로직
 @api_view(['GET'])
-@authentication_classes([JSONWebTokenAuthentication])
-@permission_classes([IsAuthenticated])
 def showmovies(request):
     # Movie List를 db에서 가져오고 없으면 404를 반환
     movie_list = get_list_or_404(Movie)
