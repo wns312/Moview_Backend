@@ -1,7 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from movies.models import Movie
 # Create your models here.
 class User(AbstractUser):
+
+    # False일 시 선호영화 선택 페이지를 로그인 시 띄우고 True만듬
+    is_recommended = models.BooleanField(default=False)  
+
     # 필드 재정의
     email = models.EmailField(max_length=150, unique=True)
     # 유저이름 필드를 email로 변경하겠다

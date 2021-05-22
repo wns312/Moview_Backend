@@ -5,7 +5,9 @@ from .models import Movie, Genre
 # Indentation 2로 설정되어 있음 주의!
 
 class MovieSerializer(serializers.ModelSerializer):
-  pass
+  class Meta:
+    Model = Movie
+    fields = '__all__'
 
 class MovieListSerializer(serializers.ModelSerializer):
     class Meta:
