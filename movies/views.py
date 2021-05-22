@@ -16,10 +16,35 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 @api_view(['POST'])
 @authentication_classes([JSONWebTokenAuthentication])
 @permission_classes([IsAuthenticated])
-def get_movie_detail(requests, movie_id):
-    movie = get_object_or_404(Movie, pk=movie_id)
-    serializer = MovieSerializer(movie)
+def movie_vote(request, movie_id):
+    rating = request.data.get('rating')
+    # 유효한 숫자가 아닐 경우 리턴시킨다.
+    if not 0 <= rating <= 10 or type(rating) != type(int(rating)):
+        return Response({'message' : '유효한 숫자가 아닙니다'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    request.data['user'], request.data['movie'] = request.user.id, movie_id
+
+    prefer = get_object_or_404(Prefer, movie_id=movie_id, user=request.user)
+    if prefer:  # 이미 투표한 적이 있다면 수정
+        serializer = PreferSerializer(prefer, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+    else:  # 투표 한 적이 없다면 생성
+        serializer = PreferSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
     return Response(serializer.data)
+    
+
+@api_view(['POST'])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_movie_detail(request, movie_id):
+    movie = get_object_or_404(Movie, pk=movie_id)
+    prefer = get_object_or_404(Prefer, movie=movie, user=request.user)
+    print(prefer.rating)
+    serializer = MovieSerializer(movie)
+    return Response({"movie" : serializer.data, "rating" : prefer.rating})
 
 
 
