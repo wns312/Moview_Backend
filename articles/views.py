@@ -10,27 +10,36 @@ from .serializers import ArticleSerializer, CommentSerializer
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-# Create your views here.
-@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+
+
+# GET POST로 GET은 목록, POST는 글 작성으로 변경해야 할까?
+@api_view(['GET', 'POST'])
 @authentication_classes([JSONWebTokenAuthentication])
 @permission_classes([IsAuthenticated])
-def article(request, article_id, movie_id):
+def aritcles(request, movie_id):
     if request.method =="GET":
-        article = get_object_or_404(Article, pk=article_id)
-        serializer = ArticleSerializer(article)
-        return Response(serializer.data)
-    elif request.method =="POST":
+        # 작성 필요
+        pass
+    else:  # POST
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
+
+# 여기서의 GET PUT DELETE는 글 한개에 대한 GET PUT DELETE
+@api_view(['GET', 'PUT', 'DELETE'])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
+def article_detail(request, movie_id, article_id):
+    article = get_object_or_404(Article, pk=article_id)
+    if request.method =="GET":
+        serializer = ArticleSerializer(article)
+        return Response(serializer.data)
     elif request.method =="PUT":
-        article = get_object_or_404(Article, pk=article_id)
         serializer = ArticleSerializer(article, data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
     else:  # Delete
-        article = get_object_or_404(Article, pk=article_id)
         article.delete()
         return Response({"Success" : True})
