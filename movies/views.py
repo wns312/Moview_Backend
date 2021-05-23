@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, get_list_or_404
 from .models import Movie, Genre, Prefer
 from accounts.models import User
 from accounts.serializers import UserSerializer
-from .serializers import GenreSerializer, MovieSerializer, MovieListSerializer, PreferSerializer
+from .serializers import GenreSerializer, MovieSerializer, MovieListSerializer, PreferSerializer, PreferSaveSerializer
 from datetime import date
 import requests
 # jwt
@@ -13,44 +13,47 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 # Create your views here.
 
-@api_view(['POST'])
+@api_view(['POST', 'PUT', 'DELETE'])
 @authentication_classes([JSONWebTokenAuthentication])
 @permission_classes([IsAuthenticated])
 def movie_vote(request, movie_id):
+    
+    if request.method == 'DELETE':
+        prefer = get_object_or_404(Prefer, movie_id=movie_id, user=request.user)
+        prefer.delete()
+        return Response({'Success' : True})
+
     rating = request.data.get('rating')
     # 유효한 숫자가 아닐 경우 리턴시킨다.
     if not 0 <= rating <= 10 or type(rating) != type(int(rating)):
         return Response({'message' : '유효한 숫자가 아닙니다'}, status=status.HTTP_400_BAD_REQUEST)
-    
     request.data['user'], request.data['movie'] = request.user.id, movie_id
     is_prefer_exist = Prefer.objects.filter(movie_id=movie_id, user=request.user).exists()
-    if is_prefer_exist:  # 이미 투표한 적이 있다면 수정
+    if request.method == 'POST' and not is_prefer_exist:
+        serializer = PreferSaveSerializer(data=request.data)
+    else:  # PUT일 경우
         prefer = get_object_or_404(Prefer, movie_id=movie_id, user=request.user)
-        serializer = PreferSerializer(prefer, data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-    else:  # 투표 한 적이 없다면 생성
-        serializer = PreferSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-    return Response(serializer.data)
+        serializer = PreferSaveSerializer(prefer, data=request.data)
+
+    if serializer.is_valid(raise_exception=True):
+        serializer.save()
+        return Response(serializer.data)
     
 
 @api_view(['POST'])
 @authentication_classes([JSONWebTokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_movie_detail(request, movie_id):
-    movie = get_object_or_404(Movie, pk=movie_id)
-    serializer = MovieSerializer(movie)
-    
     is_prefer_exist = Prefer.objects.filter(movie_id=movie_id, user=request.user).exists()
-    rating = None
-
     if is_prefer_exist:
-        prefer = get_object_or_404(Prefer, movie_id=movie_id, user=request.user)
-        rating = prefer.rating
-    
-    return Response({"movie" : serializer.data, "rating" : rating})
+        # Movie 기준으로 가져오는게 아니라 prefer 기준으로 PreferSerializer에 movie를 정의해놓아야 하는 것
+        prefer = get_object_or_404(Prefer.objects.select_related('movie'), movie_id=movie_id, user=request.user)
+        serializer = MovieSerializer(prefer.movie)
+        return Response({"movie" : serializer.data, "rating" : prefer.rating})
+    else :
+        movie = get_object_or_404(Movie, pk=movie_id)
+        serializer = MovieSerializer(movie)
+        return Response({"movie" : serializer.data, "rating" : None})
 
 
 
