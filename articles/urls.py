@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
 urlpatterns = [
-    # path('', views.create_article)
+    # articles/id/movie/id
+    path('<int:article_id>/movie/<int:movie_id>/', views.article)
 ]

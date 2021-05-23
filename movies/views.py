@@ -1,13 +1,15 @@
 from django.shortcuts import render, get_object_or_404, get_list_or_404
-from .models import Movie, Genre, Prefer
-from accounts.models import User
-from accounts.serializers import UserSerializer
-from .serializers import GenreSerializer, MovieSerializer, MovieListSerializer, PreferSerializer, PreferSaveSerializer
 from datetime import date
 import requests
-# jwt
+# models
+from .models import Movie, Genre, Prefer
+from accounts.models import User
+# drf
 from rest_framework import status
 from rest_framework.response import Response
+from accounts.serializers import UserSerializer
+from .serializers import GenreSerializer, MovieSerializer, MovieListSerializer, PreferSerializer, PreferSaveSerializer
+# jwt
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
