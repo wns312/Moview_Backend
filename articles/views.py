@@ -15,4 +15,22 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 @authentication_classes([JSONWebTokenAuthentication])
 @permission_classes([IsAuthenticated])
 def article(request, article_id, movie_id):
-    pass
+    if request.method =="GET":
+        article = get_object_or_404(Article, pk=article_id)
+        serializer = ArticleSerializer(article)
+        return Response(serializer.data)
+    elif request.method =="POST":
+        serializer = ArticleSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)
+    elif request.method =="PUT":
+        article = get_object_or_404(Article, pk=article_id)
+        serializer = ArticleSerializer(article, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)
+    else:  # Delete
+        article = get_object_or_404(Article, pk=article_id)
+        article.delete()
+        return Response({"Success" : True})
