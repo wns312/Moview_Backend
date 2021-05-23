@@ -16,10 +16,11 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 @api_view(['GET', 'POST'])
 @authentication_classes([JSONWebTokenAuthentication])
 @permission_classes([IsAuthenticated])
-def aritcles(request, movie_id):
+def articles(request, movie_id):
     if request.method =="GET":
-        # 작성 필요
-        pass
+        article_list = get_list_or_404(Article)
+        serializer = ArticleSerializer(article_list, many=True)
+        return Response(serializer.data)
     else:  # POST
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
