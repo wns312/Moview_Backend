@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 # models
 from .models import Article, Comment
+from movies.models import Movie
 # drf
 from rest_framework import status
 from rest_framework.response import Response
@@ -22,8 +23,12 @@ def articles(request, movie_id):
         serializer = ArticleSerializer(article_list, many=True)
         return Response(serializer.data)
     else:  # POST
+        print(request.data['title'])
+        request.data['user'] = request.user.id
+        print(request.data)
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
+            print('hi')
             serializer.save()
             return Response(serializer.data)
 
