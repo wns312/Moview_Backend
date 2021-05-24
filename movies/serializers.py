@@ -15,7 +15,7 @@ class MovieListSerializer(serializers.ModelSerializer):
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
-        fields = '__all__'
+        fields = ('id', 'name')
 
 
 
@@ -34,6 +34,22 @@ class PreferSerializer(serializers.ModelSerializer):
 
 # Prefer 새로운 평점 저장을 위한 용도
 class PreferSaveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prefer
+        fields = '__all__'
+
+
+
+# 영화 추천을 위한 시리얼라이저
+class MovieRecommendSerializer(serializers.ModelSerializer):
+    # prefer_users = UserSerializer(many=True, read_only=True)
+    class Meta:
+        model = Movie
+        fields = ('genres',)
+
+class PreferRecommendSerializer(serializers.ModelSerializer):
+    movie = MovieRecommendSerializer(read_only=True)
+
     class Meta:
         model = Prefer
         fields = '__all__'

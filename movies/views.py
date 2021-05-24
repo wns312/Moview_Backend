@@ -8,7 +8,7 @@ from accounts.models import User
 from rest_framework import status
 from rest_framework.response import Response
 from accounts.serializers import UserSerializer
-from .serializers import GenreSerializer, MovieSerializer, MovieListSerializer, PreferSerializer, PreferSaveSerializer
+from .serializers import GenreSerializer, MovieSerializer, MovieListSerializer, PreferSerializer, PreferSaveSerializer, PreferRecommendSerializer
 # jwt
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -113,13 +113,34 @@ def showmovies(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+
+
+
+
+def return_genres(datas):
+    count_dict = {
+        12: [0, 'Adventure', 12], 14: [0, 'Fantasy', 14], 16: [0, 'Animation', 16], 18: [0, 'Drama', 18], 
+        27: [0, 'Horror', 27], 28: [0, 'Action', 28], 35: [0, 'Comedy', 35], 36: [0, 'History', 36], 
+        37: [0, 'Western', 37], 53: [0, 'Thriller', 53], 80: [0, 'Crime', 80], 99: [0, 'Documentary', 99], 
+        878: [0, 'Science Fiction', 878], 9648: [0, 'Mystery', 9648], 10402: [0, 'Music', 10402], 10749: [0, 'Romance', 10749], 
+        10751: [0, 'Family', 10751], 10752: [0, 'War', 10752], 10770: [0, 'TV Movie', 10770]
+    }
+    for data in datas:
+        genres = data.get("movie").get('genres')
+        for genre in genres:
+            count_dict[genre][0] = count_dict[genre][0]+1
+    prior = list(count_dict.values())
+    prior.sort(reverse=True)
+    return prior[:3]
+
+
 # 영화 정보 받아서 뿌리기위한 로직
 @api_view(['GET'])
 def test(request):
     # 정참조
-    movie = Movie.objects.get(pk=8)
-    prefer_users = movie.prefer_users.all()
-    serializer = UserSerializer(prefer_users, many=True)
+    # movie = Movie.objects.get(pk=8)
+    # prefer_users = movie.prefer_users.all()
+    # serializer = UserSerializer(prefer_users, many=True)
 
     # # 중개모델 쿼리
     # prefer = Prefer.objects.get(movie=8)
@@ -129,5 +150,27 @@ def test(request):
     # user = User.objects.get(pk=6)
     # prefer_movies = user.prefer_movies.all()
     # serializer = MovieSerializer(prefer_movies, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    # -------------------------------------------------------------------------
+
+    # 여기서 연결시킬 무비시리얼라이즈가 장르만 가져오도록 시리얼라이저설정
+    # 없을 경우 404 에러와 함께 나오는 메시지
+    # {
+    # "detail": "찾을 수 없습니다."
+    # }
+    
+    # prefers = Prefer.objects.select_related('movie').filter(rating__gte=8, pk=1)
+    prefers = get_list_or_404(Prefer.objects.select_related('movie'), rating__gte=8, user_id=1)
+    serializer = PreferRecommendSerializer(prefers, many=True)
+    # print(serializer.data)
+    genres = return_genres(serializer.data)
+    recommended_movies = dict()
+    for c, genre, genreNum in genres:
+        movies = get_list_or_404(Movie.objects.order_by('popularity'), genres=genreNum)[:20]
+        recommended_movies.setdefault(genre, list())
+        serializer = MovieListSerializer(movies, many=True)
+        recommended_movies[genre] = serializer.data
+    return Response(recommended_movies, status=status.HTTP_200_OK)
+
+
+
 
