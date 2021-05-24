@@ -27,7 +27,10 @@ def articles(request):
     # print(type(serializer.data[0]))
     for i in range(len(article_list)):
         serializer.data[i].update({'movie': zzz[i].movie.title})
-        serializer.data[i].update({'user': zzz[i].user.username})
+        serializer.data[i].update({'user': {
+            'username' : zzz[i].user.username,
+            'id' : zzz[i].user.id
+        }})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 # GET POST로 GET은 목록, POST는 글 작성으로 변경해야 할까?
