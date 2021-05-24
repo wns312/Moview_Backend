@@ -137,27 +137,7 @@ def return_genres(datas):
 # 영화 정보 받아서 뿌리기위한 로직
 @api_view(['GET'])
 def test(request):
-    # 정참조
-    # movie = Movie.objects.get(pk=8)
-    # prefer_users = movie.prefer_users.all()
-    # serializer = UserSerializer(prefer_users, many=True)
-
-    # # 중개모델 쿼리
-    # prefer = Prefer.objects.get(movie=8)
-    # serializer = PreferSerializer(prefer)
-
-    # # 역참조
-    # user = User.objects.get(pk=6)
-    # prefer_movies = user.prefer_movies.all()
-    # serializer = MovieSerializer(prefer_movies, many=True)
-    # -------------------------------------------------------------------------
-
-    # 여기서 연결시킬 무비시리얼라이즈가 장르만 가져오도록 시리얼라이저설정
-    # 없을 경우 404 에러와 함께 나오는 메시지
-    # {
-    # "detail": "찾을 수 없습니다."
-    # }
-    
+    # 없을 경우 404 에러와 함께 나오는 메시지 { "detail": "찾을 수 없습니다." }
     # prefers = Prefer.objects.select_related('movie').filter(rating__gte=8, pk=1)
     prefers = get_list_or_404(Prefer.objects.select_related('movie'), rating__gte=8, user_id=1)
     serializer = PreferRecommendSerializer(prefers, many=True)
