@@ -136,12 +136,13 @@ def return_genres(datas):
 
 # 영화 정보 받아서 뿌리기위한 로직
 @api_view(['GET'])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
 def test(request):
     # 없을 경우 404 에러와 함께 나오는 메시지 { "detail": "찾을 수 없습니다." }
-    # prefers = Prefer.objects.select_related('movie').filter(rating__gte=8, pk=1)
-    prefers = get_list_or_404(Prefer.objects.select_related('movie'), rating__gte=8, user_id=1)
+    prefers = Prefer.objects.select_related('movie').filter(rating__gte=8, user_id=request.user.id)
+    prefers = get_list_or_404(prefers)
     serializer = PreferRecommendSerializer(prefers, many=True)
-    # print(serializer.data)
     genres = return_genres(serializer.data)
     recommended_movies = dict()
     for c, genre, genreNum in genres:
