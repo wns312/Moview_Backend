@@ -12,23 +12,37 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
+# 모든 리뷰 GET
+@api_view(['GET'])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
+def articles(request):
+    zzz = Article.objects.select_related('movie').select_related('user').order_by('pk')
+    print(zzz[0].movie.title)
+    print(zzz[0].user.username)
+    article_list = get_list_or_404(Article)
+    serializer = ArticleSerializer(article_list, many=True)
+    # serializer.data는 Ordered dict를 담고 있는 배열
+    # print(serializer.data[0])
+    # print(type(serializer.data[0]))
+    for i in range(len(article_list)):
+        serializer.data[i].update({'movie': zzz[i].movie.title})
+        serializer.data[i].update({'user': zzz[i].user.username})
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 # GET POST로 GET은 목록, POST는 글 작성으로 변경해야 할까?
 @api_view(['GET', 'POST'])
 @authentication_classes([JSONWebTokenAuthentication])
 @permission_classes([IsAuthenticated])
-def articles(request, movie_id):
+def movie_article(request, movie_id):
     if request.method =="GET":
         article_list = get_list_or_404(Article)
         serializer = ArticleSerializer(article_list, many=True)
         return Response(serializer.data)
     else:  # POST
-        print(request.data['title'])
         request.data['user'] = request.user.id
-        print(request.data)
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            print('hi')
             serializer.save()
             return Response(serializer.data)
 
