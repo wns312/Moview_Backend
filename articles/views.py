@@ -6,7 +6,7 @@ from movies.models import Movie
 from rest_framework import status
 from rest_framework.response import Response
 # drf serializers
-from .serializers import ArticleSerializer, CommentSerializer
+from .serializers import ArticleSerializer, ArticleCreateSerializer, CommentSerializer
 # jwt
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -17,20 +17,8 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 @authentication_classes([JSONWebTokenAuthentication])
 @permission_classes([IsAuthenticated])
 def articles(request):
-    zzz = Article.objects.select_related('movie').select_related('user').order_by('pk')
-    print(zzz[0].movie.title)
-    print(zzz[0].user.username)
-    article_list = get_list_or_404(Article)
+    article_list = Article.objects.select_related('movie').select_related('user').order_by('-pk')
     serializer = ArticleSerializer(article_list, many=True)
-    # serializer.data는 Ordered dict를 담고 있는 배열
-    # print(serializer.data[0])
-    # print(type(serializer.data[0]))
-    for i in range(len(article_list)):
-        serializer.data[i].update({'movie': zzz[i].movie.title})
-        serializer.data[i].update({'user': {
-            'username' : zzz[i].user.username,
-            'id' : zzz[i].user.id
-        }})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 # GET POST로 GET은 목록, POST는 글 작성으로 변경해야 할까?
@@ -44,7 +32,7 @@ def movie_article(request, movie_id):
         return Response(serializer.data)
     else:  # POST
         request.data['user'] = request.user.id
-        serializer = ArticleSerializer(data=request.data)
+        serializer = ArticleCreateSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
