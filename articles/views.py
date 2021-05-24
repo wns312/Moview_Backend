@@ -41,11 +41,11 @@ def movie_article(request, movie_id):
 @api_view(['GET', 'PUT', 'DELETE'])
 @authentication_classes([JSONWebTokenAuthentication])
 @permission_classes([IsAuthenticated])
-def article_detail(request, movie_id, article_id):
+def article_detail(request, article_id):
     article = get_object_or_404(Article, pk=article_id)
     if request.method =="GET":
         serializer = ArticleSerializer(article)
-        return Response(serializer.data)
+        return Response({'article' : serializer.data, 'isAuthor' : request.user==article.user})
     elif request.method =="PUT":
         serializer = ArticleSerializer(article, data=request.data)
         if serializer.is_valid(raise_exception=True):
