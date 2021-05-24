@@ -5,7 +5,8 @@ from .models import Article, Comment
 class ArticleSerializer(serializers.ModelSerializer):
   class Meta:
     model = Article
-    fields = '__all__'
+    # like users는 생성단계에서 들어가지 않는다.
+    fields = ('title', 'content', 'movie', 'user')
 
 
 class CommentSerializer(serializers.ModelSerializer):
