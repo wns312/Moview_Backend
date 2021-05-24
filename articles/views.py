@@ -17,10 +17,8 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 @authentication_classes([JSONWebTokenAuthentication])
 @permission_classes([IsAuthenticated])
 def articles(request):
-    zzz = Article.objects.select_related('movie').select_related('user').order_by('pk')
-    print(zzz[0].movie.title)
-    print(zzz[0].user.username)
-    article_list = get_list_or_404(Article)
+    zzz = Article.objects.select_related('movie').select_related('user').order_by('-pk')
+    article_list = get_list_or_404(Article.objects.order_by('-pk'))
     serializer = ArticleSerializer(article_list, many=True)
     # serializer.data는 Ordered dict를 담고 있는 배열
     # print(serializer.data[0])
