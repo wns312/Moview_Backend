@@ -6,7 +6,7 @@ from movies.models import Movie
 from rest_framework import status
 from rest_framework.response import Response
 # drf serializers
-from .serializers import ArticleSerializer, ArticleCreateSerializer, CommentSerializer
+from .serializers import ArticleSerializer, ArticleCreateSerializer, CommentSerializer, ArticleUpdateSerializer
 # jwt
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -47,7 +47,8 @@ def article_detail(request, article_id):
         serializer = ArticleSerializer(article)
         return Response({'article' : serializer.data, 'isAuthor' : request.user==article.user})
     elif request.method =="PUT":
-        serializer = ArticleSerializer(article, data=request.data)
+        print(request.data)
+        serializer = ArticleUpdateSerializer(article, data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)

@@ -5,6 +5,6 @@ urlpatterns = [
     path('', views.articles),
     # 'post' / article CREATE url
     path('movie/<int:movie_id>/', views.movie_article),
-    # 미구현
+    # 'get / put / delete'
     path('<int:article_id>/', views.article_detail)
 ]
