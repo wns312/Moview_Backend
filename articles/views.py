@@ -62,7 +62,7 @@ def article_detail(request, article_id):
 def article_comment(request, article_id):
     article = get_object_or_404(Article, pk=article_id)
     if request.method == 'GET':
-        comments = article.article_comments.orderby('-pk')
+        comments = article.article_comments.order_by('-pk')
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
