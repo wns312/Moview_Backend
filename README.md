@@ -12,7 +12,7 @@
 
 [ ✔ ] gitignore 설정
 
-[ ✔ ] License 추가
+[ ❌ ] License 추가
 
 [ ❌ ] author 추가
 
@@ -31,25 +31,19 @@
 
 [ ✔ ]  signup 로직 구현
 
+...
+
+[  ] views.py Http Method 이상한 곳 수정하기
+
+[  ] 별점 가중치를 -6~4?
+
+0 1 2 3 4 5 6 7 8 9 10
+
+-4 -3 -2 -2 -1 -1 0 1 2 3 4 (6까지는 선호한다고 보기 어렵기 때문)
+
+[  ] 관리자 페이지 구성을 위한 질문 (admin.py 구성)
 
 
-### Front-End
-
-[ ✔ ] 로그인, 회원가입 router 제작
-
-[ ❌ ] 로그인, 회원가입 기능 구현
-
-
-
----
-
-## Front-End 서버 패키지
-
-``vue``
-``vuex``
-``vue-router``
-``axios``
-``lodash``
 
 
 ## Back-End 서버 패키지
