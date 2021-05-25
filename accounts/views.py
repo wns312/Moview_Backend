@@ -1,11 +1,21 @@
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.contrib.auth import get_user_model
 from rest_framework import status
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 
 from .serializers import UserSerializer
+# jwt
+from rest_framework.decorators import api_view, authentication_classes, permission_classes 
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+
+@api_view(['GET'])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
+def user_info(request):
+  serializer = UserSerializer(request.user)
+  return Response(serializer.data) 
 
 
 @api_view(['GET', 'POST'])
