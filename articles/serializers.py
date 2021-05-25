@@ -17,7 +17,7 @@ class ArticleCreateSerializer(serializers.ModelSerializer):
   class Meta:
     model = Article
     # like users는 생성단계에서 들어가지 않는다.
-    fields = ('title', 'content', 'movie', 'user')
+    fields = ('id', 'title', 'content', 'movie', 'user')
 
 
 class CommentSerializer(serializers.ModelSerializer):
