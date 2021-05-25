@@ -6,5 +6,9 @@ urlpatterns = [
     # 'post' / article CREATE url
     path('movie/<int:movie_id>/', views.movie_article),
     # 'get / put / delete'
-    path('<int:article_id>/', views.article_detail)
+    path('<int:article_id>/', views.article_detail),
+
+    # get / post / delete 
+    path('<int:article_id>/comments/', views.article_comment),
+
 ]

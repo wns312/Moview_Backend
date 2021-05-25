@@ -12,18 +12,11 @@ class ArticleSerializer(serializers.ModelSerializer):
     # like users는 생성단계에서 들어가지 않는다.
     fields = '__all__'
 
-
 class ArticleCreateSerializer(serializers.ModelSerializer):
   class Meta:
     model = Article
     # like users는 생성단계에서 들어가지 않는다.
     fields = ('id', 'title', 'content', 'movie', 'user')
-
-
-class CommentSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = Comment
-    fields = '__all__'
 
 class ArticleUpdateSerializer(serializers.ModelSerializer):
   user = UserSerializer(read_only=True)
@@ -32,3 +25,10 @@ class ArticleUpdateSerializer(serializers.ModelSerializer):
     model = Article
     # like users는 생성단계에서 들어가지 않는다.
     fields = ('id', 'title', 'content', 'movie', 'user')
+
+class CommentSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Comment
+    fields = '__all__'
+
+
