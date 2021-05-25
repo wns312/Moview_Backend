@@ -27,8 +27,14 @@ class ArticleUpdateSerializer(serializers.ModelSerializer):
     fields = ('id', 'title', 'content', 'movie', 'user')
 
 class CommentSerializer(serializers.ModelSerializer):
+  user = UserSerializer(read_only=True)
   class Meta:
     model = Comment
     fields = '__all__'
 
+
+class CommentPostSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Comment
+    fields = '__all__'
 
