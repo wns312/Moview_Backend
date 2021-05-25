@@ -6,7 +6,7 @@ from movies.models import Movie
 from rest_framework import status
 from rest_framework.response import Response
 # drf serializers
-from .serializers import ArticleSerializer, ArticleCreateSerializer, ArticleUpdateSerializer, CommentSerializer 
+from .serializers import ArticleSerializer, ArticleCreateSerializer, ArticleUpdateSerializer, CommentSerializer, CommentPostSerializer 
 # jwt
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -62,19 +62,20 @@ def article_detail(request, article_id):
 def article_comment(request, article_id):
     article = get_object_or_404(Article, pk=article_id)
     if request.method == 'GET':
-        comments = article.article_comments.orderby('-pk')
+        comments = article.article_comments.order_by('-pk')
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
         # 영화는 직접 넣어서 와야함
         request.data['user'] = request.user.id
         request.data['article'] = article_id
-        serializer = CommentSerializer(data=request.data)
+        serializer = CommentPostSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
     else:  # DELETE
-        comment = get_object_or_404(Comment, pk=request.data.comment_id)
+        print(request.data)
+        comment = get_object_or_404(Comment, pk=request.data['comment_id'])
         comment.delete()
         return Response({"Success" : True})
 
