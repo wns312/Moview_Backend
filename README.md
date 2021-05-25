@@ -32,6 +32,7 @@
 [ ✔ ]  signup 로직 구현
 
 ...
+[  ] 초기 추천 완료. 이제 로그인 시 is_recommended에 따라 추천을 받을지 안받을지 구현하고, is_recommended 튕겨내기 작성 + is_recommended가 false일 시 다른 페이지에 접근할 수 없도록 설정
 
 [  ] views.py Http Method 이상한 곳 수정하기
 

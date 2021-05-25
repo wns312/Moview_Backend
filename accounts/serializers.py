@@ -5,3 +5,8 @@ class UserSerializer(serializers.ModelSerializer):
   class Meta:
     model = get_user_model()
     fields = ('username', 'email', 'password')
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = get_user_model()
+    fields = ('is_recommended',)

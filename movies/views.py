@@ -7,7 +7,7 @@ from accounts.models import User
 # drf
 from rest_framework import status
 from rest_framework.response import Response
-from accounts.serializers import UserSerializer
+from accounts.serializers import UserSerializer, UserUpdateSerializer
 from .serializers import GenreSerializer, MovieSerializer, MovieListSerializer, PreferSerializer, PreferSaveSerializer, PreferRecommendSerializer
 # jwt
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -135,22 +135,37 @@ def return_genres(datas):
 
 
 # 영화 정보 받아서 뿌리기위한 로직
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 @authentication_classes([JSONWebTokenAuthentication])
 @permission_classes([IsAuthenticated])
-def test(request):
-    # 없을 경우 404 에러와 함께 나오는 메시지 { "detail": "찾을 수 없습니다." }
-    prefers = Prefer.objects.select_related('movie').filter(rating__gte=8, user_id=request.user.id)
-    prefers = get_list_or_404(prefers)
-    serializer = PreferRecommendSerializer(prefers, many=True)
-    genres = return_genres(serializer.data)
-    recommended_movies = dict()
-    for c, genre, genreNum in genres:
-        movies = get_list_or_404(Movie.objects.order_by('popularity'), genres=genreNum)[:20]
-        recommended_movies.setdefault(genre, list())
-        serializer = MovieListSerializer(movies, many=True)
-        recommended_movies[genre] = serializer.data
-    return Response(recommended_movies, status=status.HTTP_200_OK)
+def recommend(request):
+    if request.method == 'GET':
+        # 없을 경우 404 에러와 함께 나오는 메시지 { "detail": "찾을 수 없습니다." }
+        prefers = Prefer.objects.select_related('movie').filter(rating__gte=8, user_id=request.user.id)
+        prefers = get_list_or_404(prefers)
+        serializer = PreferRecommendSerializer(prefers, many=True)
+        genres = return_genres(serializer.data)
+        recommended_movies = dict()
+        for c, genre, genreNum in genres:
+            movies = get_list_or_404(Movie.objects.order_by('popularity'), genres=genreNum)[:20]
+            recommended_movies.setdefault(genre, list())
+            serializer = MovieListSerializer(movies, many=True)
+            recommended_movies[genre] = serializer.data
+        return Response(recommended_movies, status=status.HTTP_200_OK)
+    else:  # POST
+        movies = request.data
+        for movie in movies:
+            movie['user'] = request.user.id
+            serializer = PreferSaveSerializer(data=movie)
+            # 중복처리 해줘야 함 -> 안해줘도 됨. 왜냐면 첫 로그인 때만 가능하게 할 거니까
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+            
+        # 이제 유저의 is_recommended 를 true로 만들어주고 저장해준다.
+        serializer = UserUpdateSerializer(request.user, data={ 'is_recommended' : True})
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return Response(movies)
 
 
 
