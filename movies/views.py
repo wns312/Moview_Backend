@@ -21,7 +21,8 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 def movie_vote(request, movie_id):
     
     if request.method == 'DELETE':
-        prefer = get_object_or_404(Prefer, movie_id=movie_id, user=request.user)
+        prefer = get_list_or_404(Prefer, movie_id=movie_id, user=request.user)
+        prefer = prefer[0]
         prefer.delete()
         return Response({'Success' : True})
 
@@ -34,8 +35,8 @@ def movie_vote(request, movie_id):
     if request.method == 'POST' and not is_prefer_exist:
         serializer = PreferSaveSerializer(data=request.data)
     else:  # PUT일 경우
-        prefer = get_object_or_404(Prefer, movie_id=movie_id, user=request.user)
-        serializer = PreferSaveSerializer(prefer, data=request.data)
+        prefer = get_list_or_404(Prefer, movie_id=movie_id, user=request.user)
+        serializer = PreferSaveSerializer(prefer[0], data=request.data)
 
     if serializer.is_valid(raise_exception=True):
         serializer.save()
@@ -152,7 +153,7 @@ def recommend(request):
         genres = return_genres(serializer.data)
         recommended_movies = dict()
         for c, genre, genreNum in genres:
-            movies = get_list_or_404(Movie.objects.order_by('popularity'), genres=genreNum)[:20]
+            movies = get_list_or_404(Movie.objects.order_by('popularity'), genres=genreNum)[:30]
             recommended_movies.setdefault(genre, list())
             serializer = MovieListSerializer(movies, many=True)
             recommended_movies[genre] = serializer.data
