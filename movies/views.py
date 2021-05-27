@@ -49,9 +49,9 @@ def get_movie_detail(request, movie_id):
     is_prefer_exist = Prefer.objects.filter(movie_id=movie_id, user=request.user).exists()
     if is_prefer_exist:
         # Movie 기준으로 가져오는게 아니라 prefer 기준으로 PreferSerializer에 movie를 정의해놓아야 하는 것
-        prefer = get_object_or_404(Prefer.objects.select_related('movie'), movie_id=movie_id, user=request.user)
-        serializer = MovieSerializer(prefer.movie)
-        return Response({"movie" : serializer.data, "rating" : prefer.rating})
+        prefer = get_list_or_404(Prefer.objects.select_related('movie'), movie_id=movie_id, user=request.user)
+        serializer = MovieSerializer(prefer[0].movie)
+        return Response({"movie" : serializer.data, "rating" : prefer[0].rating})
     else :
         movie = get_object_or_404(Movie, pk=movie_id)
         serializer = MovieSerializer(movie)
