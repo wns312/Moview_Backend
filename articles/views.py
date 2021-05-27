@@ -27,7 +27,7 @@ def articles(request):
 @permission_classes([IsAuthenticated])
 def movie_article(request, movie_id):
     if request.method =="GET":
-        article_list = get_list_or_404(Article)
+        article_list = get_list_or_404(Article, movie=movie_id)
         serializer = ArticleSerializer(article_list, many=True)
         return Response(serializer.data)
     else:  # POST
