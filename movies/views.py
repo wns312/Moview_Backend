@@ -125,10 +125,16 @@ def return_genres(datas):
         878: [0, 'Science Fiction', 878], 9648: [0, 'Mystery', 9648], 10402: [0, 'Music', 10402], 10749: [0, 'Romance', 10749], 
         10751: [0, 'Family', 10751], 10752: [0, 'War', 10752], 10770: [0, 'TV Movie', 10770]
     }
+
+    rating_dict = {
+        0: -4, 1: -3, 2: -2, 3: -2, 4: -1, 5: -1, 
+        6: 0, 7: 1, 8: 2, 9: 3, 10: 4, 
+    }
     for data in datas:
         genres = data.get("movie").get('genres')
+        rating = data.get('rating')
         for genre in genres:
-            count_dict[genre][0] = count_dict[genre][0]+1
+            count_dict[genre][0] = count_dict[genre][0]+rating_dict[rating]
     prior = list(count_dict.values())
     prior.sort(reverse=True)
     return prior[:3]
@@ -140,9 +146,8 @@ def return_genres(datas):
 @permission_classes([IsAuthenticated])
 def recommend(request):
     if request.method == 'GET':
-        # 없을 경우 404 에러와 함께 나오는 메시지 { "detail": "찾을 수 없습니다." }
-        prefers = Prefer.objects.select_related('movie').filter(rating__gte=8, user_id=request.user.id)
-        prefers = get_list_or_404(prefers)
+        # get_list_or_404에서 없을 경우 404 에러와 함께 나오는 메시지 { "detail": "찾을 수 없습니다." }
+        prefers = Prefer.objects.select_related('movie').filter(user_id=request.user.id)
         serializer = PreferRecommendSerializer(prefers, many=True)
         genres = return_genres(serializer.data)
         recommended_movies = dict()
